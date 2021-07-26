@@ -60,42 +60,6 @@ buildscript {
 	}
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-
-shadowJar {
-    mergeServiceFiles()
-}
-
-jar {
-    manifest {
-        attributes(
-            'Main-Class': "gecco2020.mlcnp.GeccoExperimenter"
-        )
-    }
-}
-
-task experimenter(type: Jar) {
-    manifest {
-		attributes 'Main-Class': 'gecco2020.mlcnp.GeccoExperimenter'
-    }
-    zip64 = true
-    baseName = 'GECCO-2020'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-    with jar
-}
-
-task baselineExperimenter(type: Jar) {
-    manifest {
-		attributes 'Main-Class': 'gecco2020.mlcnp.baseline.BaselineExperimenter'
-    }
-    zip64 = true
-    baseName = 'BaselineExperimenter'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-    with jar
-}
-
 configurations {
 }
 
@@ -111,6 +75,11 @@ repositories {
 	flatDir {
 		dirs 'lib'
 	}
+}
+
+task startWrapper(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "dacbench.hyflex.wrapper.HyFlexApplication"
 }
 
 test {
